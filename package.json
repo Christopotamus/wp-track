@@ -4,7 +4,9 @@
   "description": "A tracking code plugin for wordpress that lets you generate and track pixels free, on your own hosting.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cp -r ./src/ ./build/",
+    "build-test": "rm -rf ./wp-dev/wordpress/wp-content/plugins/wp-track && cp -r ./src/ ./wp-dev/wordpress/wp-content/plugins/wp-track"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,9 @@
   "bugs": {
     "url": "https://github.com/Christopotamus/wp-track/issues"
   },
-  "homepage": "https://github.com/Christopotamus/wp-track#readme"
+  "homepage": "https://github.com/Christopotamus/wp-track#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.8"
+  }
 }
