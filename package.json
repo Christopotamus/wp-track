@@ -1,0 +1,25 @@
+{
+  "name": "wp-track",
+  "version": "1.0.0",
+  "description": "A tracking code plugin for wordpress that lets you generate and track pixels free, on your own hosting.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Christopotamus/wp-track.git"
+  },
+  "keywords": [
+    "tracking",
+    "pixel",
+    "wordpress",
+    "plugin"
+  ],
+  "author": "Christopher Budd",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Christopotamus/wp-track/issues"
+  },
+  "homepage": "https://github.com/Christopotamus/wp-track#readme"
+}
