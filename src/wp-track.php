@@ -25,6 +25,23 @@ function wp_track_initialize_post_Types() {
 
 }
 
+function setup_wp_track_table() {
+  global $wpdb;
+  $charset_collate = $wpdb->get_charset_collate();
+
+  $table_name = $wpdb->prefix . "wp_track";
+  
+  $sql = "CREATE TABLE $table_name (
+    id mediumint(9) NOT NULL AUTO_INCREMENT,
+    time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+    ip_address text NOT NULL,
+    wp_track_id text NOT NULL,
+    PRIMARY KEY (id) 
+  ) $charset_collate;";
+
+  require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+  dbDelta( $sql );
+}
 function init_wp_track_metaboxes() {
   
 }
@@ -134,4 +151,5 @@ add_action('admin_menu', 'init_wp_track_metaboxes');
 add_action('add_meta_boxes', 'wptrack_custom_meta_boxes');
 add_action('save_post', 'wptrack_save_postdata');
 
+register_activation_hook( __FILE__, 'setup_wp_track_table' );
 ?>
