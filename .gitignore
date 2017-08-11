@@ -1,2 +1,3 @@
 wp-dev
 *.swp
+node_modules

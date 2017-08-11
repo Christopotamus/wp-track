@@ -26,6 +26,7 @@
   "homepage": "https://github.com/Christopotamus/wp-track#readme",
   "devDependencies": {
     "gulp": "^3.9.1",
-    "gulp-util": "^3.0.8"
+    "gulp-util": "^3.0.8",
+    "gulp-zip": "^4.0.0"
   }
 }
