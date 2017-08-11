@@ -180,4 +180,5 @@ add_action('add_meta_boxes', 'wptrack_custom_meta_boxes');
 add_action('save_post', 'wptrack_save_postdata');
 
 register_activation_hook( __FILE__, 'setup_wp_track_table' );
+require_once('gf-wp-track.php');
 ?>
