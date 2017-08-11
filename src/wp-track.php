@@ -49,6 +49,7 @@ function init_wp_track_metaboxes() {
 function wptrack_custom_meta_boxes() {
   add_meta_box('wptrack_gform_id', 'GravityForms ID', 'wptrack_gform_id_box_html', 'wptrack_tracking');
   add_meta_box('wptrack_tracking_id', 'Tracking Code', 'wptrack_tracking_id_box_html', 'wptrack_tracking');
+  add_meta_box('wptrack_tracking_html', 'Tracking Beacons', 'wptrack_tracking_html', 'wptrack_tracking');
 }
 function wptrack_tracking_id_box_html($post)
 {
@@ -77,6 +78,32 @@ function wptrack_gform_id_box_html($post)
       <input name="wptrack_gform_id" id="wptrack_gform_id" class="postbox" type="text" value="<?php echo $value ?>" />
     </div>
     <?php
+}
+function wptrack_tracking_html($post){
+  global $wpdb;
+  $table = $wpdb->prefix . 'wp_track';
+  if( $post->ID ) {
+    $tracking_id = get_post_meta($post->ID, 'wptrack_tracking_id', true);
+    $results = $wpdb->get_results( "SELECT * FROM $table WHERE wp_track_id = '$tracking_id';");
+    $value = get_post_meta($post->ID, 'wptrack_gform_id', true);
+    if ( $tracking_id) {
+
+      ?>
+      <ul>
+        <?php
+          for ($i = 0; $i < count($results); $i++) {
+            
+        ?>
+          <li>
+            Viewed at <?php echo $results[$i]->time; ?> from <?php echo $results[$i]->ip_address ?>
+          </li>
+        <?php
+          }
+        ?>
+      </ul>
+      <?php
+    }
+  } 
 }
 function wptrack_save_postdata($post_id)
 {
