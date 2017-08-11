@@ -63,8 +63,9 @@ function wptrack_tracking_id_box_html($post)
   wp_nonce_field( 'wptrack_tracking_id_save', 'wptrack_tracking_id_nonce' );
     ?>
     <div>
-      <label for="wptrack_tracking_id">tracking_id</label>
+      <label for="wptrack_tracking_id">Tracking ID:</label>
       <input name="wptrack_tracking_id" disabled id="wptrack_tracking_id" class="postbox" type="text" value="<?php echo $tracking_id ?>" />
+      Tracking URL: <h3><?php echo get_site_url()?>/wptrack.png?wptrack_id=<?php echo $tracking_id ?></h3>
     </div>
     <?php
 }
