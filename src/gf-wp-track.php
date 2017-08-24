@@ -42,6 +42,5 @@ class GF_WPTrack_Bootstrap {
 }
 
 
-add_filter('gform_pre_send_email', 'insert_wp_tracking_code', 10, 4);
 
 ?>

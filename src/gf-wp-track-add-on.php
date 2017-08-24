@@ -45,6 +45,7 @@ class GFWPTrack extends GFAddOn {
     public function init() {
         parent::init();
         add_filter( 'gform_submit_button', array( $this, 'form_submit_button' ), 10, 2 );
+        add_filter('gform_notification', 'insert_wp_tracking_code', 10, 4);
     }
 
     public function scripts() {
@@ -171,10 +172,39 @@ class GFWPTrack extends GFAddOn {
 function mapNotificationsToCheckboxes($notification) {
   $note = array(
     'label' => esc_html__( $notification['name'], 'wptrack' ),
-    'name' => preg_replace('/\s+/','',$notification['name']),
+    'name' => preg_replace('/\s+/','',$notification['id']),
     'default_value' => 0,
     'value' => 0,
   );
   return $note;
+}
+function insert_wp_tracking_code($notification, $form, $entry) {
+  global $wpdb;
+  // get activated notifications for form.
+  $settings = (new GFWPTrack())->get_form_settings( $form );
+  error_log(json_encode($settings));
+  error_log(json_encode($notification));
+  error_log(isset($settings[$notification['id']]));
+  if( isset( $settings['enabled'] )&& $settings['enabled'] == '1'  ) {
+    if ( isset( $notification['id']) && isset($settings[$notification['id']])
+                && $settings[$notification['id']] == '1' ) 
+    {
+      error_log("Creating the post");
+      $defaults = array(
+        'post_title' => wp_strip_all_tags($notification['to']),
+        'post_content' => '',
+        'post_status' => 'publish',
+        'post_type' => 'wptrack_tracking',
+        'meta_input' => array (
+          'wptrack_gform_id' => $entry['id'],
+          'wptrack_tracking_id' => uniqid(),
+        )
+      );
+      $post = wp_insert_post($defaults); 
+      
+      $notification['message'] .= '<img src="'.get_site_url().'/wptrack.png?wptrack_id=599f5aaeb9c5f">';
+    }
+  }
+  return $notification;
 }
 ?>
