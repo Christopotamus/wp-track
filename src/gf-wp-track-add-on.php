@@ -1,5 +1,25 @@
 <?php
-
+/*
+ The MIT License (MIT)
+ 
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the "Software"),
+ to deal in the Software without restriction, including without limitation
+ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ and/or sell copies of the Software, and to permit persons to whom the Software
+ is furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ IN THE SOFTWARE.
+ 
+*/
 GFForms::include_addon_framework();
 
 class GFWPTrack extends GFAddOn {
@@ -87,7 +107,7 @@ class GFWPTrack extends GFAddOn {
                 'title'  => esc_html__( 'WPTrack Settings', 'wptrack' ),
                 'fields' => array(
                     array(
-                        'name'              => 'wptrack',
+                        // 'name'              => 'wptrack',
                         'tooltip'           => esc_html__( 'This is the tooltip', 'wptrack' ),
                         'label'             => esc_html__( 'This is the label', 'wptrack' ),
                         'type'              => 'text',
@@ -98,47 +118,37 @@ class GFWPTrack extends GFAddOn {
             )
         );
     }
-
+    
     public function form_settings_fields( $form ) {
-        return array(
+      $notifications = array_map('mapNotificationsToCheckboxes', $form['notifications']);
+
+      return array(
+        array(
+          'title'  => esc_html__( 'WPTrack Form Settings', 'wptrack' ),
+          'fields' => array(
             array(
-                'title'  => esc_html__( 'WPTrack Form Settings', 'wptrack' ),
-                'fields' => array(
-                    array(
-                        'label'   => esc_html__( 'Enable Tracking', 'wptrack' ),
-                        'type'    => 'checkbox',
-                        'name'    => 'enabled',
-                        'tooltip' => esc_html__( 'This enables tracking on this form', 'wptrack' ),
-                        'choices' => array(
-                            array(
-                                'label' => esc_html__( 'Enabled', 'wptrack' ),
-                                'name'  => 'enabled',
-                            ),
-                        ),
-                    ),
-                    array(
-                        'label'   => esc_html__( 'Notifications', 'wptrack' ),
-                        'type'    => 'multiselect',
-                        'name'    => 'notifications',
-                        'tooltip' => esc_html__( 'This is the tooltip', 'wptrack' ),
-                        'choices' => array(
-                            array(
-                                'label' => esc_html__( 'First Choice', 'wptrack' ),
-                                'value' => 'first',
-                            ),
-                            array(
-                                'label' => esc_html__( 'Second Choice', 'wptrack' ),
-                                'value' => 'second',
-                            ),
-                            array(
-                                'label' => esc_html__( 'Third Choice', 'wptrack' ),
-                                'value' => 'third',
-                            ),
-                        ),
-                    ),
+              'label'   => esc_html__( 'Enable Tracking', 'wptrack' ),
+              'type'    => 'checkbox',
+              'name'    => 'enabled',
+              'tooltip' => esc_html__( 'This enables tracking on this form', 'wptrack' ),
+              'choices' => array(
+                array(
+                  'label' => esc_html__( 'Enabled', 'wptrack' ),
+                  'name'  => 'enabled',
+                  'default_value' => 0,
                 ),
+              ),
             ),
-        );
+            array(
+              'name'    => 'wptrack_notifications',
+              'label'   => esc_html__( 'Tracking Notifications', 'wptrack' ),
+              'type'    => 'checkbox',
+              'tooltip' => esc_html__( 'Select your notifications here', 'wptrack' ),
+              'choices' => $notifications,
+            ),
+          ),
+        ),
+      );
     }
 
     public function settings_my_custom_field_type( $field, $echo = true ) {
@@ -157,5 +167,14 @@ class GFWPTrack extends GFAddOn {
         return strlen( $value ) < 10;
     }
 
+}
+function mapNotificationsToCheckboxes($notification) {
+  $note = array(
+    'label' => esc_html__( $notification['name'], 'wptrack' ),
+    'name' => preg_replace('/\s+/','',$notification['name']),
+    'default_value' => 0,
+    'value' => 0,
+  );
+  return $note;
 }
 ?>

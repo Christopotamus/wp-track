@@ -6,7 +6,28 @@
    Version: 1.0
    Author: Christopher Budd
    Author URI: http://mynameischrisbuddandstuff.com
-   License: TBD
+   License: MIT
+   
+   The MIT License (MIT)
+   
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the Software
+   is furnished to do so, subject to the following conditions:
+ 
+   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ 
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+   THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+   IN THE SOFTWARE.
+ 
+ 
  */
 
 function wp_track_initialize_post_Types() {
@@ -49,6 +70,7 @@ function init_wp_track_metaboxes() {
 function wptrack_custom_meta_boxes() {
   add_meta_box('wptrack_gform_id', 'GravityForms ID', 'wptrack_gform_id_box_html', 'wptrack_tracking');
   add_meta_box('wptrack_tracking_id', 'Tracking Code', 'wptrack_tracking_id_box_html', 'wptrack_tracking');
+  add_meta_box('wptrack_tracking_email', 'Alert Email', 'wptrack_tracking_email_box_html', 'wptrack_tracking');
   add_meta_box('wptrack_tracking_html', 'Tracking Beacons', 'wptrack_tracking_html', 'wptrack_tracking');
 }
 function wptrack_tracking_id_box_html($post)
@@ -66,6 +88,18 @@ function wptrack_tracking_id_box_html($post)
       <label for="wptrack_tracking_id">Tracking ID:</label>
       <input name="wptrack_tracking_id" disabled id="wptrack_tracking_id" class="postbox" type="text" value="<?php echo $tracking_id ?>" />
       Tracking URL: <h3><?php echo get_site_url()?>/wptrack.png?wptrack_id=<?php echo $tracking_id ?></h3>
+    </div>
+    <?php
+}
+function wptrack_tracking_email_box_html($post)
+{
+  $tracking_email = get_post_meta($post->ID, 'wptrack_tracking_email', true);
+
+  wp_nonce_field( 'wptrack_tracking_email_save', 'wptrack_tracking_email_nonce' );
+    ?>
+    <div>
+      <label for="wptrack_tracking_email">Email Alerts:</label>
+      <input name="wptrack_tracking_email" email="wptrack_tracking_email" class="postbox" type="text" value="<?php echo $tracking_email ?>" />
     </div>
     <?php
 }
@@ -121,6 +155,18 @@ function wptrack_save_postdata($post_id)
       );
     }
   }
+  if (array_key_exists('wptrack_tracking_email', $_POST)) {
+    if (  isset( $_POST['wptrack_tracking_email_nonce'])
+      &&  wp_verify_nonce( $_POST['wptrack_tracking_email_nonce'], 'wptrack_tracking_email_save' )
+    ) {
+      update_post_meta(
+        $post_id,
+        'wptrack_tracking_email',
+        $_POST['wptrack_tracking_email']
+      );
+    }
+  }
+
   if( !$tracking_id ) { 
     if (  isset( $_POST['wptrack_tracking_id_nonce'])
       &&  wp_verify_nonce( $_POST['wptrack_tracking_id_nonce'], 'wptrack_tracking_id_save' ) )

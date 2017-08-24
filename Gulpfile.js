@@ -14,3 +14,5 @@ gulp.task('build-dist', function() {
 gulp.task('watch-build-test',function() {
   gulp.watch('./src/**.php',['build-test']);
 });
+
+gulp.task('default',['watch-build-test']);
