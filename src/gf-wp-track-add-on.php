@@ -187,8 +187,14 @@ class GFWPTrack extends GFAddOn {
         $gform_id = $entry['id'];
         $args = array(
           'post_type' => 'wptrack_tracking',
-          
-        ) ;
+          'meta_query' => array(
+            array(
+              'key' => 'wptrack_gform_id',
+              'value' => $gform_id,
+              'compare' => '='
+            )
+          ) 
+        );
         $gformquery = new WP_Query( $args );
         if( $gformquery->have_posts() ) {
           while( $gformquery->have_posts() ) {
@@ -242,8 +248,16 @@ function insert_wp_tracking_code($notification, $form, $entry) {
                 && $settings[$notification['id']] == '1' ) 
     {
       $gform_id = $entry['id'];
+      $gform_id = $entry['id'];
       $args = array(
         'post_type' => 'wptrack_tracking',
+        'meta_query' => array(
+          array(
+            'key' => 'wptrack_gform_id',
+            'value' => $gform_id,
+            'compare' => '='
+          )
+        ) 
       );
       $gformquery = new WP_Query( $args );
       if( $gformquery->have_posts() ) {
