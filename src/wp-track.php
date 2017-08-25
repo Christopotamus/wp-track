@@ -68,9 +68,12 @@ function init_wp_track_metaboxes() {
 }
 
 function wptrack_custom_meta_boxes() {
-  add_meta_box('wptrack_gform_id', 'GravityForms ID', 'wptrack_gform_id_box_html', 'wptrack_tracking');
+
+  if ( class_exists("GFForms" ))  {
+    add_meta_box('wptrack_gform_id', 'GravityForms ID', 'wptrack_gform_id_box_html', 'wptrack_tracking');
+  }
   add_meta_box('wptrack_tracking_id', 'Tracking Code', 'wptrack_tracking_id_box_html', 'wptrack_tracking');
-  // add_meta_box('wptrack_tracking_email', 'Alert Email', 'wptrack_tracking_email_box_html', 'wptrack_tracking');
+  add_meta_box('wptrack_tracking_email', 'Alert Email', 'wptrack_tracking_email_box_html', 'wptrack_tracking');
   add_meta_box('wptrack_tracking_html', 'Tracking Beacons', 'wptrack_tracking_html', 'wptrack_tracking');
 }
 function wptrack_tracking_id_box_html($post)
@@ -94,12 +97,19 @@ function wptrack_tracking_id_box_html($post)
 function wptrack_tracking_email_box_html($post)
 {
   $tracking_email = get_post_meta($post->ID, 'wptrack_tracking_email', true);
+  $tracking_email_enabled = get_post_meta($post->ID, 'wptrack_tracking_email_enabled', true);
 
   wp_nonce_field( 'wptrack_tracking_email_save', 'wptrack_tracking_email_nonce' );
+  wp_nonce_field( 'wptrack_tracking_email_enabled_save', 'wptrack_tracking_email_enabled_nonce' );
     ?>
     <div>
       <label for="wptrack_tracking_email">Email Alerts:</label>
-      <input name="wptrack_tracking_email" email="wptrack_tracking_email" class="postbox" type="text" value="<?php echo htmlspecialchars($tracking_email) ?>" />
+      <input name="wptrack_tracking_email" id="wptrack_tracking_email" class="postbox" type="text" value="<?php echo htmlspecialchars($tracking_email) ?>" />
+      <br />
+      <label for="wptrack_tracking_email_enabled">
+        Send notification emails
+        <input name="wptrack_tracking_email_enabled" id="wptrack_tracking_email_enabled" class="postbox" type="checkbox" value="<?php echo htmlspecialchars($tracking_email_enabled) ?>" />
+      </label>
     </div>
     <?php
 }
@@ -168,7 +178,18 @@ function wptrack_save_postdata($post_id)
       );
     }
   }
-
+  error_log(json_encode($_POST));
+  if (array_key_exists('wptrack_tracking_email_enabled', $_POST)) {
+    if (  isset( $_POST['wptrack_tracking_email_enabled_nonce'])
+      &&  wp_verify_nonce( $_POST['wptrack_tracking_email_enabled_nonce'], 'wptrack_tracking_email_enabled_save' )
+    ) {
+      update_post_meta(
+        $post_id,
+        'wptrack_tracking_email_enabled',
+        $_POST['wptrack_tracking_email_enabled']
+      );
+    }
+  }
   if( !$tracking_id ) { 
     if (  isset( $_POST['wptrack_tracking_id_nonce'])
       &&  wp_verify_nonce( $_POST['wptrack_tracking_id_nonce'], 'wptrack_tracking_id_save' ) )
@@ -228,5 +249,7 @@ add_action('add_meta_boxes', 'wptrack_custom_meta_boxes');
 add_action('save_post', 'wptrack_save_postdata');
 
 register_activation_hook( __FILE__, 'setup_wp_track_table' );
-require_once('gf-wp-track.php');
+if ( class_exists("GFForms" ))  {
+  require_once('gf-wp-track.php');
+}
 ?>
