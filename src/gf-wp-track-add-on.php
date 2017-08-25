@@ -248,7 +248,6 @@ function insert_wp_tracking_code($notification, $form, $entry) {
                 && $settings[$notification['id']] == '1' ) 
     {
       $gform_id = $entry['id'];
-      $gform_id = $entry['id'];
       $args = array(
         'post_type' => 'wptrack_tracking',
         'meta_query' => array(
