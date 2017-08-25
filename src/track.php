@@ -37,7 +37,7 @@ if  ( isset($_GET['wptrack_id']) ) {
   $wpdb->insert(
     $table,
     array(
-      'time' => current_time('mysql'),
+      'time' => current_time('mysql', true),
       'ip_address' => $user_ip,
       'wp_track_id' => $trackingId,
     )
