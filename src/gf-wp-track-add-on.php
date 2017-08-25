@@ -210,9 +210,12 @@ class GFWPTrack extends GFAddOn {
             <ul>
             <?php
               for ($i = 0; $i < count($results); $i++) {
+                $tz = date_default_timezone_get();
+                $time = (new DateTime($results[$i]->time, new DateTimeZone($tz)));
+
             ?>
                 <li>
-                  Viewed at <?php echo $results[$i]->time; ?> from <?php echo $results[$i]->ip_address ?>
+                  Viewed at <?php echo $time->format("Y-m-d H:i:s")?> from <?php echo $results[$i]->ip_address ?>
                 </li>
             <?php
               }
