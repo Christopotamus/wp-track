@@ -215,7 +215,6 @@ class GFWPTrack extends GFAddOn {
                 $time->setTimezone(new DateTimeZone($tz));
             ?>
                 <li>
-                  <?php echo "Timezone: ". $tz ?>
                   Viewed at <?php echo $time->format("Y-m-d H:i:s")?> from <?php echo $results[$i]->ip_address ?>
                 </li>
             <?php
