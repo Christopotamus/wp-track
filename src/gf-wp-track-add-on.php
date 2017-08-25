@@ -46,6 +46,7 @@ class GFWPTrack extends GFAddOn {
         parent::init();
         add_filter( 'gform_submit_button', array( $this, 'form_submit_button' ), 10, 2 );
         add_filter('gform_notification', 'insert_wp_tracking_code', 10, 4);
+        add_filter('gform_entry_detail_meta_boxes', array ( $this, 'add_wptrack_meta_boxes' ), 10, 3);
     }
 
     public function scripts() {
@@ -167,7 +168,61 @@ class GFWPTrack extends GFAddOn {
     public function is_valid_setting( $value ) {
         return strlen( $value ) < 10;
     }
+    public function add_wptrack_meta_boxes($meta_boxes, $entry, $form) {
+      $settings = (new GFWPTrack())->get_form_settings( $form );
+      if( isset( $settings['enabled'] )&& $settings['enabled'] == '1'  ) {
+        error_log("TESTING");
+        $meta_boxes[$this->_slug] = array (
+          'title' => $this->get_short_title(),
+          'callback' => array ( $this, 'wptrack_tracking_html' ),
+          'context' => 'side',
+        ); 
+      }
+      return $meta_boxes;
+    }
+    public function wptrack_tracking_html($args){
+      global $wpdb;
+      $entry = $args['entry'];
+      $table = $wpdb->prefix . 'wp_track';
+      if( $entry['id'] ) {
+        $gform_id = $entry['id'];
+        $gformquery = new WP_Query( 
+          array(
+            'post_type' => 'wptrack_tracking',
+            // 'meta_key' => 'gform_id',
+            'meta_query' => array (
+              'key' => 'gform_id',
+              'value' => $gform_id,
+              'compare' => '=' 
+            ),
+          ) 
+        );
+        if( $gformquery->have_posts() ) {
+          $gformquery->the_post(); 
+          $post = $gformquery->post;
+          error_log("DEBUG");
+          error_log(json_encode($gformquery->post));
+          $tracking_id = get_post_meta($post->ID, 'wptrack_tracking_id', true);
+          $results = $wpdb->get_results( "SELECT * FROM $table WHERE wp_track_id = '$tracking_id';");
+          if ( $results) {
 
+            ?>
+            <ul>
+            <?php
+              for ($i = 0; $i < count($results); $i++) {
+            ?>
+                <li>
+                  Viewed at <?php echo $results[$i]->time; ?> from <?php echo $results[$i]->ip_address ?>
+                </li>
+            <?php
+              }
+            ?>
+            </ul>
+            <?php
+          }
+        } 
+      }
+    }
 }
 function mapNotificationsToCheckboxes($notification) {
   $note = array(
@@ -182,9 +237,6 @@ function insert_wp_tracking_code($notification, $form, $entry) {
   global $wpdb;
   // get activated notifications for form.
   $settings = (new GFWPTrack())->get_form_settings( $form );
-  error_log(json_encode($settings));
-  error_log(json_encode($notification));
-  error_log(isset($settings[$notification['id']]));
   if( isset( $settings['enabled'] )&& $settings['enabled'] == '1'  ) {
     if ( isset( $notification['id']) && isset($settings[$notification['id']])
                 && $settings[$notification['id']] == '1' ) 
@@ -208,4 +260,5 @@ function insert_wp_tracking_code($notification, $form, $entry) {
   }
   return $notification;
 }
+
 ?>
