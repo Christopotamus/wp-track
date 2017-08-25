@@ -190,6 +190,7 @@ function insert_wp_tracking_code($notification, $form, $entry) {
                 && $settings[$notification['id']] == '1' ) 
     {
       error_log("Creating the post");
+      $trackingID = uniqid();
       $defaults = array(
         'post_title' => wp_strip_all_tags($notification['to']),
         'post_content' => '',
@@ -197,12 +198,12 @@ function insert_wp_tracking_code($notification, $form, $entry) {
         'post_type' => 'wptrack_tracking',
         'meta_input' => array (
           'wptrack_gform_id' => $entry['id'],
-          'wptrack_tracking_id' => uniqid(),
+          'wptrack_tracking_id' => $trackingID,
         )
       );
       $post = wp_insert_post($defaults); 
-      
-      $notification['message'] .= '<img src="'.get_site_url().'/wptrack.png?wptrack_id=599f5aaeb9c5f">';
+      $trackingURL = get_site_url("/", 'https').'wptrack.png?wptrack_id='.$trackingID; 
+      $notification['message'] .= '<img src="'.$trackingURL.'">';
     }
   }
   return $notification;
