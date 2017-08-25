@@ -84,13 +84,17 @@ function wptrack_tracking_id_box_html($post)
   if (! $tracking_id ) { 
     $tracking_id = 'This will generate after you save';
   }
-
+  $trackingURL = get_site_url()."/wptrack.png?wptrack_id=".htmlspecialchars($tracking_id);
+  $trackingImgTag = htmlspecialchars("<img src=".$trackingURL."/>");
   wp_nonce_field( 'wptrack_tracking_id_save', 'wptrack_tracking_id_nonce' );
     ?>
     <div>
       <label for="wptrack_tracking_id">Tracking ID:</label>
       <input name="wptrack_tracking_id" disabled id="wptrack_tracking_id" class="postbox" type="text" value="<?php echo htmlspecialchars($tracking_id) ?>" />
-      Tracking URL: <h3><?php echo get_site_url()?>/wptrack.png?wptrack_id=<?php echo htmlspecialchars($tracking_id) ?></h3>
+      <br />
+      <p>To use this tracking pixel, please embed the following code in an HTML formatted email or webpage</p>
+      <code><?php echo $trackingImgTag; ?></code>
+      <p>You may also use the URL directly however you see fit<br /><?php echo $trackingURL ?></p>
     </div>
     <?php
 }
@@ -149,7 +153,7 @@ function wptrack_tracking_html($post){
             $time->setTimezone(new DateTimeZone($tz));
           ?>
             <li>
-              Viewed at <?php echo $time->format("Y-m-d H:i:s")?> from <?php echo htmlspecialchars($results[$i]->ip_address) ?>
+              Viewed at <b><?php echo $time->format("Y-m-d H:i:s")?></b> by <b><?php echo htmlspecialchars($results[$i]->ip_address) ?></b>
             </li>
         <?php
           }
