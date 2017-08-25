@@ -247,7 +247,6 @@ function insert_wp_tracking_code($notification, $form, $entry) {
                 && $settings[$notification['id']] == '1' ) 
     {
       $trackingID = uniqid();
-      error_log(json_encode($notification));
       if($notification['toType'] == 'email') {
         $to = $notification['to'];
       } else if($notification['toType'] == 'field' && isset($entry[$notification['to']])) {
@@ -256,7 +255,7 @@ function insert_wp_tracking_code($notification, $form, $entry) {
       if( isset($to) ) {
 
         $defaults = array(
-          'post_title' => $notification['name'] . " for " . wp_strip_all_tags($to),
+          'post_title' => $form['title'] . " for " . wp_strip_all_tags($to),
           'post_content' => '',
           'post_status' => 'publish',
           'post_type' => 'wptrack_tracking',
