@@ -86,8 +86,8 @@ function wptrack_tracking_id_box_html($post)
     ?>
     <div>
       <label for="wptrack_tracking_id">Tracking ID:</label>
-      <input name="wptrack_tracking_id" disabled id="wptrack_tracking_id" class="postbox" type="text" value="<?php echo $tracking_id ?>" />
-      Tracking URL: <h3><?php echo get_site_url()?>/wptrack.png?wptrack_id=<?php echo $tracking_id ?></h3>
+      <input name="wptrack_tracking_id" disabled id="wptrack_tracking_id" class="postbox" type="text" value="<?php echo htmlspecialchars($tracking_id) ?>" />
+      Tracking URL: <h3><?php echo get_site_url()?>/wptrack.png?wptrack_id=<?php echo htmlspecialchars($tracking_id) ?></h3>
     </div>
     <?php
 }
@@ -99,7 +99,7 @@ function wptrack_tracking_email_box_html($post)
     ?>
     <div>
       <label for="wptrack_tracking_email">Email Alerts:</label>
-      <input name="wptrack_tracking_email" email="wptrack_tracking_email" class="postbox" type="text" value="<?php echo $tracking_email ?>" />
+      <input name="wptrack_tracking_email" email="wptrack_tracking_email" class="postbox" type="text" value="<?php echo htmlspecialchars($tracking_email) ?>" />
     </div>
     <?php
 }
@@ -110,7 +110,7 @@ function wptrack_gform_id_box_html($post)
     ?>
     <div>
       <label for="wptrack_gform_id">gform_id</label>
-      <input name="wptrack_gform_id" id="wptrack_gform_id" class="postbox" type="text" value="<?php echo $value ?>" />
+      <input name="wptrack_gform_id" id="wptrack_gform_id" class="postbox" type="text" value="<?php echo htmlspecialchars($value) ?>" />
     </div>
     <?php
 }
@@ -132,7 +132,7 @@ function wptrack_tracking_html($post){
             $time->setTimezone(new DateTimeZone($tz));
           ?>
             <li>
-              Viewed at <?php echo $time->format("Y-m-d H:i:s")?> from <?php echo $results[$i]->ip_address ?>
+              Viewed at <?php echo $time->format("Y-m-d H:i:s")?> from <?php echo htmlspecialchars($results[$i]->ip_address) ?>
             </li>
         <?php
           }
