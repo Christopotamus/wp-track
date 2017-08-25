@@ -70,7 +70,7 @@ function init_wp_track_metaboxes() {
 function wptrack_custom_meta_boxes() {
   add_meta_box('wptrack_gform_id', 'GravityForms ID', 'wptrack_gform_id_box_html', 'wptrack_tracking');
   add_meta_box('wptrack_tracking_id', 'Tracking Code', 'wptrack_tracking_id_box_html', 'wptrack_tracking');
-  add_meta_box('wptrack_tracking_email', 'Alert Email', 'wptrack_tracking_email_box_html', 'wptrack_tracking');
+  // add_meta_box('wptrack_tracking_email', 'Alert Email', 'wptrack_tracking_email_box_html', 'wptrack_tracking');
   add_meta_box('wptrack_tracking_html', 'Tracking Beacons', 'wptrack_tracking_html', 'wptrack_tracking');
 }
 function wptrack_tracking_id_box_html($post)
