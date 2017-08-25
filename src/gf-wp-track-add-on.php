@@ -247,19 +247,28 @@ function insert_wp_tracking_code($notification, $form, $entry) {
                 && $settings[$notification['id']] == '1' ) 
     {
       $trackingID = uniqid();
-      $defaults = array(
-        'post_title' => wp_strip_all_tags($notification['to']),
-        'post_content' => '',
-        'post_status' => 'publish',
-        'post_type' => 'wptrack_tracking',
-        'meta_input' => array (
-          'wptrack_gform_id' => $entry['id'],
-          'wptrack_tracking_id' => $trackingID,
-        )
-      );
-      $post = wp_insert_post($defaults); 
-      $trackingURL = get_site_url("/", 'https').'wptrack.png?wptrack_id='.$trackingID; 
-      $notification['message'] .= '<img src="'.$trackingURL.'">';
+      error_log(json_encode($notification));
+      if($notification['toType'] == 'email') {
+        $to = $notification['to'];
+      } else if($notification['toType'] == 'field' && isset($entry[$notification['to']])) {
+        $to = $entry[$notification['to']];
+      }
+      if( isset($to) ) {
+
+        $defaults = array(
+          'post_title' => $notification['name'] . " for " . wp_strip_all_tags($to),
+          'post_content' => '',
+          'post_status' => 'publish',
+          'post_type' => 'wptrack_tracking',
+          'meta_input' => array (
+            'wptrack_gform_id' => $entry['id'],
+            'wptrack_tracking_id' => $trackingID,
+          )
+        );
+        $post = wp_insert_post($defaults); 
+        $trackingURL = get_site_url("/", 'https').'wptrack.png?wptrack_id='.$trackingID; 
+        $notification['message'] .= '<img src="'.$trackingURL.'">';
+      }
     }
   }
   return $notification;

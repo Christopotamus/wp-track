@@ -108,7 +108,14 @@ function wptrack_tracking_email_box_html($post)
       <br />
       <label for="wptrack_tracking_email_enabled">
         Send notification emails
-        <input name="wptrack_tracking_email_enabled" id="wptrack_tracking_email_enabled" class="postbox" type="checkbox" value="<?php echo htmlspecialchars($tracking_email_enabled) ?>" />
+        <input
+          name="wptrack_tracking_email_enabled"
+          id="wptrack_tracking_email_enabled"
+          class="postbox"
+          type="checkbox"
+          value="yes"
+          <?php if(isset($tracking_email_enabled)) {checked($tracking_email_enabled, 'yes');} ?>
+        />
       </label>
     </div>
     <?php
@@ -178,17 +185,15 @@ function wptrack_save_postdata($post_id)
       );
     }
   }
-  error_log(json_encode($_POST));
-  if (array_key_exists('wptrack_tracking_email_enabled', $_POST)) {
-    if (  isset( $_POST['wptrack_tracking_email_enabled_nonce'])
-      &&  wp_verify_nonce( $_POST['wptrack_tracking_email_enabled_nonce'], 'wptrack_tracking_email_enabled_save' )
-    ) {
-      update_post_meta(
-        $post_id,
-        'wptrack_tracking_email_enabled',
-        $_POST['wptrack_tracking_email_enabled']
-      );
-    }
+  if (  isset( $_POST['wptrack_tracking_email_enabled_nonce'])
+    &&  wp_verify_nonce( $_POST['wptrack_tracking_email_enabled_nonce'], 'wptrack_tracking_email_enabled_save' )
+  ) {
+    $enabled = (isset($_POST['wptrack_tracking_email_enabled'])) ? 'yes' : '';
+    update_post_meta(
+      $post_id,
+      'wptrack_tracking_email_enabled',
+      $enabled
+    );
   }
   if( !$tracking_id ) { 
     if (  isset( $_POST['wptrack_tracking_id_nonce'])

@@ -29,8 +29,8 @@ if  ( isset($_GET['wptrack_id']) ) {
   
   $table = $wpdb->prefix . 'wp_track';
 
-  $trackingId = $_GET['wptrack_id'];
-  $user_ip = $_SERVER['REMOTE_ADDR'];
+  $trackingId = sanitize_text_field($_GET['wptrack_id']);
+  $user_ip = sanitize_text_field($_SERVER['REMOTE_ADDR']);
 
   $query = new WP_Query( array( 'post_type' => 'wptrack_tracking', 'meta_key' => 'wptrack_tracking_id', 'meta_value' => $trackingId ) );
   
@@ -47,13 +47,26 @@ if  ( isset($_GET['wptrack_id']) ) {
     // echo "Here's the tracking info<br/>";
     while ( $query->have_posts() ) {
       $query->the_post();
-      // echo "Title:". get_the_title(). "<br/>"; 
-      // echo 'Tracking id is: ' . $trackingId;
+      $post = $query->post;
+      $enabled = get_post_meta($post->ID, 'wptrack_tracking_email_enabled', true);
+      if( isset($enabled) && $enabled == "yes" ) {
+        $email = get_post_meta($post->ID, 'wptrack_tracking_email', true);
+        $subject = "WPTrack: New view of ".get_the_title()." from: ". $user_ip;
+        $message = "$user_ip just viewed your tracking pixel. <br /> <a href='".get_site_url()."/wp-admin/post.php?post=".$post->ID."&action=edit'>Click Here to view it</a>";
+
+        add_filter('wp_mail_content_type', 'set_html_email_content_type');
+        wp_mail($email, $subject, $message);
+        remove_filter('wp_mail_content_type', 'set_html_email_content_type');
+      }
       echo $transPix;
     }
   }
 } else {
   
   echo $transPix;
+}
+
+function set_html_email_content_type() {
+  return 'text/html';
 }
 ?>
