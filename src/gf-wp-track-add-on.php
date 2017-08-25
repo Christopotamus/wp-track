@@ -171,7 +171,6 @@ class GFWPTrack extends GFAddOn {
     public function add_wptrack_meta_boxes($meta_boxes, $entry, $form) {
       $settings = (new GFWPTrack())->get_form_settings( $form );
       if( isset( $settings['enabled'] )&& $settings['enabled'] == '1'  ) {
-        error_log("TESTING");
         $meta_boxes[$this->_slug] = array (
           'title' => $this->get_short_title(),
           'callback' => array ( $this, 'wptrack_tracking_html' ),
@@ -186,44 +185,47 @@ class GFWPTrack extends GFAddOn {
       $table = $wpdb->prefix . 'wp_track';
       if( $entry['id'] ) {
         $gform_id = $entry['id'];
-        $gformquery = new WP_Query( 
-          array(
-            'post_type' => 'wptrack_tracking',
-            // 'meta_key' => 'gform_id',
-            'meta_query' => array (
-              'key' => 'gform_id',
-              'value' => $gform_id,
-              'compare' => '=' 
-            ),
-          ) 
-        );
+        $args = array(
+          'post_type' => 'wptrack_tracking',
+          
+        ) ;
+        $gformquery = new WP_Query( $args );
         if( $gformquery->have_posts() ) {
-          $gformquery->the_post(); 
-          $post = $gformquery->post;
-          error_log("DEBUG");
-          error_log(json_encode($gformquery->post));
-          $tracking_id = get_post_meta($post->ID, 'wptrack_tracking_id', true);
-          $results = $wpdb->get_results( "SELECT * FROM $table WHERE wp_track_id = '$tracking_id';");
-          if ( $results) {
+          //'meta_query' => array (
+          //  'key' => 'gform_id',
+          //  'value' => $gform_id,
+          //  'compare' => 'LIKE',
+          //),
+          while( $gformquery->have_posts() ) {
+            $gformquery->the_post(); 
+            $post = $gformquery->post;
+            $post_gform_id = get_post_meta($post->ID, 'wptrack_gform_id', true);
+            if ( !empty($post_gform_id) && $gform_id == $post_gform_id ) {
 
-            ?>
-            <ul>
-            <?php
-              for ($i = 0; $i < count($results); $i++) {
-                $tz = get_option('timezone_string');
-                $time = new DateTime($results[$i]->time);
-                $time->setTimezone(new DateTimeZone($tz));
-            ?>
-                <li>
-                  Viewed at <?php echo $time->format("Y-m-d H:i:s")?> from <?php echo $results[$i]->ip_address ?>
-                </li>
-            <?php
+              $tracking_id = get_post_meta($post->ID, 'wptrack_tracking_id', true);
+              $results = $wpdb->get_results( "SELECT * FROM $table WHERE wp_track_id = '$tracking_id';");
+              if ( $results) {
+
+                ?>
+                <ul>
+                <?php
+                  for ($i = 0; $i < count($results); $i++) {
+                    $tz = get_option('timezone_string');
+                    $time = new DateTime($results[$i]->time);
+                    $time->setTimezone(new DateTimeZone($tz));
+                ?>
+                    <li>
+                      Viewed at <?php echo $time->format("Y-m-d H:i:s")?> from <?php echo $results[$i]->ip_address ?>
+                    </li>
+                <?php
+                  }
+                ?>
+                </ul>
+                <?php
               }
-            ?>
-            </ul>
-            <?php
-          }
-        } 
+            } 
+          } 
+        }
       }
     }
 }
@@ -244,7 +246,6 @@ function insert_wp_tracking_code($notification, $form, $entry) {
     if ( isset( $notification['id']) && isset($settings[$notification['id']])
                 && $settings[$notification['id']] == '1' ) 
     {
-      error_log("Creating the post");
       $trackingID = uniqid();
       $defaults = array(
         'post_title' => wp_strip_all_tags($notification['to']),
