@@ -21,11 +21,11 @@ function wptrack_create_menu() {
 
 function register_mysettings() {
 	//register our settings
-	register_setting( 'wptrack-settings-group', 'use_image_extension' );
+	register_setting( 'wptrack-settings-group', 'dont_use_image_extension' );
 }
 
 function wptrack_settings_page() {
-  $use_image_extensions = get_option('use_image_extension');
+  $dont_use_image_extensions = get_option('dont_use_image_extension');
 ?>
 <div class="wrap">
 <h2>WP Track Settings</h2>
@@ -34,12 +34,12 @@ function wptrack_settings_page() {
     <?php settings_fields( 'wptrack-settings-group' ); ?>
     <table class="form-table">
         <tr valign="top">
-        <th scope="row">Use .png image extension?</th>
+        <th scope="row">Dont Use .png image extension?</th>
         <td>
           <input type="checkbox"
-            name="use_image_extension"
+            name="dont_use_image_extension"
             value="yes" 
-            <?php if(isset($use_image_extensions)) {checked($use_image_extensions, 'yes');} ?>
+            <?php if(isset($dont_use_image_extensions)) {checked($dont_use_image_extensions, 'yes');} ?>
           />
         <p>Note: This should probably be checked, but depending on how your webhost behaves you may need to uncheck this.</p>
         </td>

@@ -68,7 +68,6 @@ function init_wp_track_metaboxes() {
 }
 
 function wptrack_custom_meta_boxes() {
-  $use_image_extension = get_option('use_image_extension');
 
   if ( class_exists("GFForms" ))  {
     add_meta_box('wptrack_gform_id', 'GravityForms ID', 'wptrack_gform_id_box_html', 'wptrack_tracking');
@@ -79,6 +78,7 @@ function wptrack_custom_meta_boxes() {
 }
 function wptrack_tracking_id_box_html($post)
 {
+  $dont_use_image_extension = get_option('dont_use_image_extension');
   if( $post->ID ) {
     $tracking_id = get_post_meta($post->ID, 'wptrack_tracking_id', true);
   } 
@@ -99,12 +99,12 @@ function wptrack_tracking_id_box_html($post)
       <input name="wptrack_tracking_id" disabled id="wptrack_tracking_id" class="postbox" type="text" value="<?php echo htmlspecialchars($tracking_id) ?>" />
       <br />
       <p>To use this tracking pixel, please embed the following code in an HTML formatted email or webpage</p>
-      <?php if (isset($use_image_extension) && $use_image_extension == 'yes') {?>
+      <?php if ( $dont_use_image_extension != 'yes' ) {?>
       <code><?php echo $trackingImgTag; ?></code>
       <?php } else  {?>
         <code><?php echo $alt_trackingImgTag; ?></code>
       <?php } ?>
-      <?php if (isset($use_image_extension) && $use_image_extension == 'yes') {?>
+      <?php if ($dont_use_image_extension != 'yes') {?>
         <p>You may also use the URL directly however you see fit<br /><?php echo $trackingURL ?></p>
       <?php } else  {?>
         <p>You may also use the URL directly however you see fit<br /><?php echo $alt_trackingURL ?></p>
