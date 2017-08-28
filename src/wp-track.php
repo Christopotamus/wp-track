@@ -3,7 +3,7 @@
    Plugin Name: WP Track
    Plugin URI: http://wp-track.com
    Description: A Plugin that generates and tracks tracking pixels for any usage
-   Version: 1.1.3
+   Version: 1.1.4
    Author: Christopher Budd
    Author URI: http://mynameischrisbuddandstuff.com
    License: MIT
