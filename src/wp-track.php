@@ -1,7 +1,7 @@
 <?php 
  /*
    Plugin Name: WP Track
-   Plugin URI: http://wp-track.com
+   Plugin URI: http://mynameischrisbuddandstuff.com/wp-track
    Description: A Plugin that generates and tracks tracking pixels for any usage
    Version: 1.1.4
    Author: Christopher Budd
