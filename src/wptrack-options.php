@@ -32,7 +32,6 @@ function wptrack_settings_page() {
 
 <form method="post" action="options.php">
     <?php settings_fields( 'wptrack-settings-group' ); ?>
-    <?php echo 'option is: ' . json_encode(get_option('use_image_extension'));  ?>
     <table class="form-table">
         <tr valign="top">
         <th scope="row">Use .png image extension?</th>

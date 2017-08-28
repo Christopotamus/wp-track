@@ -99,8 +99,16 @@ function wptrack_tracking_id_box_html($post)
       <input name="wptrack_tracking_id" disabled id="wptrack_tracking_id" class="postbox" type="text" value="<?php echo htmlspecialchars($tracking_id) ?>" />
       <br />
       <p>To use this tracking pixel, please embed the following code in an HTML formatted email or webpage</p>
+      <?php if (isset($use_image_extension) && $use_image_extension == 'yes') {?>
       <code><?php echo $trackingImgTag; ?></code>
-      <p>You may also use the URL directly however you see fit<br /><?php echo $trackingURL ?></p>
+      <?php } else  {?>
+        <code><?php echo $alt_trackingImgTag; ?></code>
+      <?php } ?>
+      <?php if (isset($use_image_extension) && $use_image_extension == 'yes') {?>
+        <p>You may also use the URL directly however you see fit<br /><?php echo $trackingURL ?></p>
+      <?php } else  {?>
+        <p>You may also use the URL directly however you see fit<br /><?php echo $alt_trackingURL ?></p>
+      <?php } ?>
     </div>
     <?php
 }
