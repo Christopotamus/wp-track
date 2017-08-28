@@ -292,7 +292,14 @@ function insert_wp_tracking_code($notification, $form, $entry) {
           $post = wp_insert_post($defaults); 
         }
       }
-      $trackingURL = get_site_url("/", 'https').'wptrack.png?wptrack_id='.$tracking_id; 
+      $dont_use_image_extension = get_option('dont_use_image_extension');
+      
+      if ( $dont_use_image_extension != 'yes' ) {
+        $trackingURL = get_site_url(null, "/", 'https').'wptrack.png?wptrack_id='.$tracking_id; 
+      } else {
+        $trackingURL = get_site_url(null, "/", 'https').'wptrack?wptrack_id='.$tracking_id; 
+      }
+
       $notification['message'] .= '<img src="'.$trackingURL.'">';
     }
   }

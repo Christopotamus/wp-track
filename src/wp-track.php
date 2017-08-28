@@ -85,8 +85,8 @@ function wptrack_tracking_id_box_html($post)
   if (! $tracking_id ) { 
     $tracking_id = 'This will generate after you save';
   }
-  $trackingURL = get_site_url()."/wptrack.png?wptrack_id=".htmlspecialchars($tracking_id);
-  $alt_trackingURL = get_site_url()."/wptrack?wptrack_id=".htmlspecialchars($tracking_id);
+  $trackingURL = get_site_url(null, '/', 'https')."/wptrack.png?wptrack_id=".htmlspecialchars($tracking_id);
+  $alt_trackingURL = get_site_url(null, '/', 'https')."/wptrack?wptrack_id=".htmlspecialchars($tracking_id);
 
   $trackingImgTag = htmlspecialchars("<img src=".$trackingURL."/>");
   $alt_trackingImgTag = htmlspecialchars("<img src=".$alt_trackingURL."/>");
