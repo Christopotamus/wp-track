@@ -30,7 +30,7 @@
  
  */
 
-function wp_track_initialize_post_Types() {
+function wp_track_initialize_gs() {
   register_post_type('wptrack_tracking',
     [
       'labels'      => [
@@ -68,6 +68,7 @@ function init_wp_track_metaboxes() {
 }
 
 function wptrack_custom_meta_boxes() {
+  $use_image_extension = get_option('use_image_extension');
 
   if ( class_exists("GFForms" ))  {
     add_meta_box('wptrack_gform_id', 'GravityForms ID', 'wptrack_gform_id_box_html', 'wptrack_tracking');
@@ -85,8 +86,13 @@ function wptrack_tracking_id_box_html($post)
     $tracking_id = 'This will generate after you save';
   }
   $trackingURL = get_site_url()."/wptrack.png?wptrack_id=".htmlspecialchars($tracking_id);
+  $alt_trackingURL = get_site_url()."/wptrack?wptrack_id=".htmlspecialchars($tracking_id);
+
   $trackingImgTag = htmlspecialchars("<img src=".$trackingURL."/>");
+  $alt_trackingImgTag = htmlspecialchars("<img src=".$alt_trackingURL."/>");
+
   wp_nonce_field( 'wptrack_tracking_id_save', 'wptrack_tracking_id_nonce' );
+
     ?>
     <div>
       <label for="wptrack_tracking_id">Tracking ID:</label>
@@ -230,6 +236,7 @@ function wptrack_insert_rewrite_rules( $rules )
 {
     $newrules = array();
     $newrules['^wptrack.png$'] = 'index.php?wptrack_id=$matches[1]';
+    $newrules['^wptrack-pixel$'] = 'index.php?wptrack_id=$matches[1]';
     return $newrules + $rules;
 }
 
@@ -247,12 +254,13 @@ function wptrack_parse_request (&$wp) {
   } 
 }
 
+//URL rewrite and handling
 add_filter( 'rewrite_rules_array','wptrack_insert_rewrite_rules' );
 add_filter( 'query_vars','wptrack_insert_query_vars' );
 add_action( 'wp_loaded','wptrack_flush_rules' );
 add_action('parse_request', 'wptrack_parse_request');
 
-add_action('init', 'wp_track_initialize_post_Types');
+add_action('init', 'wp_track_initialize_gs');
 add_action('admin_menu', 'init_wp_track_metaboxes');
 add_action('add_meta_boxes', 'wptrack_custom_meta_boxes');
 add_action('save_post', 'wptrack_save_postdata');
@@ -261,4 +269,6 @@ register_activation_hook( __FILE__, 'setup_wp_track_table' );
 if ( class_exists("GFForms" ))  {
   require_once('gf-wp-track.php');
 }
+
+require_once('wptrack-options.php');
 ?>
